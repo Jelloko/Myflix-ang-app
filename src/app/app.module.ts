@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms'; // Add this for ngModel support
 import { MatDialogModule } from '@angular/material/dialog'; // Angular Material dialog
 import { MatCardModule } from '@angular/material/card'; // Material card
@@ -22,9 +23,10 @@ import { UserRegistrationFormComponent } from './user-registration-form/user-reg
     MatDialogModule, 
     MatCardModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   providers: [
+    provideHttpClient(),
     provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
