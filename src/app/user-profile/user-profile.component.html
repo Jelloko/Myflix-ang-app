@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<body class="user-profile-page">
+<div class="profile-container">
+  <button
+    mat-raised-button
+    color="Primary"
+    style="font-size: 18px; padding: 12px 24px;"
+    (click)="backToMovie()"
+  >
+    Movies
+  </button>
+
+  <button
+    mat-raised-button
+    color="Primary"
+    style="font-size: 18px; padding: 12px 24px;"
+    (click)="logout()"
+  >
+    Logout
+  </button>
+
+  <h2>Your Profile</h2>
+
+  <!-- Display user data -->
+  <form (ngSubmit)="updateUser()" #userProfileForm="ngForm">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input
+        type="text"
+        id="username"
+        [(ngModel)]="userData.Name"
+        name="username"
+        class="form-control"
+        required
+        [readonly]="!isEditing"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="userData.Email"
+        name="email"
+        class="form-control"
+        required
+        [readonly]="!isEditing"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="birthday">Birthday:</label>
+      <!-- Show formatted date when not editing -->
+      <div *ngIf="!isEditing">
+        {{ getFormattedBirthday() }}
+      </div>
+      <!-- Show input field when editing -->
+      <input
+        *ngIf="isEditing"
+        type="date"
+        id="birthday"
+        [(ngModel)]="userData.Birthday"
+        name="birthday"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group" *ngIf="isEditing">
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="userData.Password"
+        name="password"
+        class="form-control"
+      />
+    </div>
+
+    <button
+      *ngIf="!isEditing"
+      type="button"
+      class="btn btn-secondary"
+      (click)="toggleEdit()"
+    >
+      Edit Profile
+    </button>
+    <button
+      *ngIf="isEditing"
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!userProfileForm.form.valid"
+    >
+      Save Changes
+    </button>
+  </form>
+</div>
+</body>
+
+
+
+
+  
