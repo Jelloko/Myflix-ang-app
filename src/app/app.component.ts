@@ -1,5 +1,6 @@
 // src/app/app.component.ts
 import { Component } from '@angular/core';
+import { MovieCardComponent } from './movie-card/movie-card.component';
 import { UserRegistrationFormComponent } from './user-registration-form/user-registration-form.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -11,13 +12,4 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class AppComponent {
   title = 'myFlix-Ang';
-
-  constructor(public dialog: MatDialog) { }
-// This is the function that will open the dialog when the signup button is clicked  
-openUserRegistrationDialog(): void {
-    this.dialog.open(UserRegistrationFormComponent, {
-// Assigning the dialog a width
-    width: '280px'
-    });
-  }
 }
