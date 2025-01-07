@@ -10,11 +10,27 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { UserRegistrationFormComponent } from './user-registration-form/user-registration-form.component';
+import { MovieCardComponent } from './movie-card/movie-card.component';
+import { UserLoginFormComponent } from './user-login-form/user-login-form.component';
+import { WelcomePageComponent } from './welcome-page/welcome-page.component';
+import { MatIconModule } from '@angular/material/icon';
+import { GenreDialogComponent } from './genre-info/genre-info.component';
+import { DirectorDialogComponent } from './director-info/director-info.component';
+import { SynopsisDialogComponent } from './synopsis-info/synopsis-info.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserRegistrationFormComponent // Declare the UserRegistrationFormComponent here
+    UserRegistrationFormComponent,
+    MovieCardComponent,
+    UserLoginFormComponent,
+    WelcomePageComponent,
+    DirectorDialogComponent,
+    GenreDialogComponent,
+    SynopsisDialogComponent,
+    UserProfileComponent // Declare the UserRegistrationFormComponent here
   ],
   imports: [
     BrowserModule,
@@ -24,6 +40,7 @@ import { UserRegistrationFormComponent } from './user-registration-form/user-reg
     MatCardModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
   ],
   providers: [
     provideHttpClient(),
