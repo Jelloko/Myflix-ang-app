@@ -166,7 +166,7 @@ public addFavoriteMovie(moviesId: string): Observable<any> {
   public deleteFavoriteMovie(moviesId: string) {
     const token = this.getStoredToken();
     let user = this.getStoredUser();
-    return this.http.delete(apiUrl + 'users/' + user.name + '/FavoriteMovies/' + moviesId, {
+    return this.http.delete(apiUrl + 'users/' + user.Name + '/FavoriteMovies/' + moviesId, {
       headers: new HttpHeaders(
         {
           Authorization: 'Bearer ' + token,
@@ -197,7 +197,7 @@ public addFavoriteMovie(moviesId: string): Observable<any> {
   public deleteUser(userDetails: any): Observable<any> {
     const token = this.getStoredToken();
     let user = this.getStoredUser();
-    return this.http.delete(apiUrl + 'users/' + user.name,  {
+    return this.http.delete(apiUrl + 'users/' + user.Name,  {
       headers: new HttpHeaders(
         {
           Authorization: 'Bearer ' + token,
