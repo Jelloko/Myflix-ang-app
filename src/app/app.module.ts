@@ -19,35 +19,78 @@ import { DirectorDialogComponent } from './director-info/director-info.component
 import { SynopsisDialogComponent } from './synopsis-info/synopsis-info.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
-
+/**
+ * The root module of the application.
+ *
+ * @remarks
+ * This module declares all components used in the application and imports
+ * essential Angular and Angular Material modules.
+ */
 @NgModule({
   declarations: [
+    /** The root component of the application. */
     AppComponent,
+
+    /** Component for user registration functionality. */
     UserRegistrationFormComponent,
+
+    /** Component for displaying movie cards. */
     MovieCardComponent,
+
+    /** Component for user login functionality. */
     UserLoginFormComponent,
+
+    /** Component for the welcome page. */
     WelcomePageComponent,
+
+    /** Dialog component for displaying director information. */
     DirectorDialogComponent,
+
+    /** Dialog component for displaying genre information. */
     GenreDialogComponent,
+
+    /** Dialog component for displaying movie synopsis. */
     SynopsisDialogComponent,
-    UserProfileComponent // Declare the UserRegistrationFormComponent here
+
+    /** Component for user profile management. */
+    UserProfileComponent
   ],
   imports: [
+    /** Module for running the application in a web browser. */
     BrowserModule,
+
+    /** Module for routing within the application. */
     AppRoutingModule,
-    FormsModule, // Necessary for form controls
-    MatDialogModule, 
+
+    /** Module for supporting template-driven forms. */
+    FormsModule,
+
+    /** Angular Material module for dialogs. */
+    MatDialogModule,
+
+    /** Angular Material module for cards. */
     MatCardModule,
+
+    /** Angular Material module for input fields. */
     MatInputModule,
+
+    /** Angular Material module for buttons. */
     MatButtonModule,
-    MatIconModule,
+
+    /** Angular Material module for icons. */
+    MatIconModule
   ],
   providers: [
+    /** Provider for HTTP client services. */
     provideHttpClient(),
+
+    /** Provider for asynchronous animations. */
     provideAnimationsAsync()
   ],
+  /** The root component to bootstrap the application. */
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
 
 
