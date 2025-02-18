@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 /**
  * Base URL for the API endpoints.
  */
-const apiUrl = 'https://my-flix-cf-fd6a3633859c.herokuapp.com/';
+const apiUrl = 'http://52.87.247.133/';
 
 /**
  * Injectable service to manage user registration, authentication, and API interactions.
