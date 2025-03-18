@@ -19,6 +19,8 @@ export class UserProfileComponent implements OnInit {
   isEditing: boolean = false;
   selectedFile: File | null = null;
   uploadedUrl: string | null = null;
+  originalImages: string[] = [];
+  resizedImages: string[] = [];
 
   constructor(
     public fetchApiData: UserRegistrationService,
@@ -95,50 +97,6 @@ export class UserProfileComponent implements OnInit {
     localStorage.removeItem('currentUser');
   }
 
-  uploadFile(): void {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    if (!fileInput.files?.length) {
-      alert('Please select a file to upload.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', fileInput.files[0]);
-
-    this.http.post<{ message: string }>('/api/upload', formData).subscribe({
-      next: (response) => {
-        alert(response.message);
-        this.loadItems();
-      },
-      error: (error) => console.error('Upload error:', error)
-    });
-  }
-
-  loadItems(): void {
-    this.http.get<{ original: any[], resized: any[] }>('/api/images').subscribe({
-      next: (data) => {
-        const originalContainer = document.getElementById('originalImages');
-        const resizedContainer = document.getElementById('resizedImages');
-
-        if (originalContainer) originalContainer.innerHTML = '';
-        if (resizedContainer) resizedContainer.innerHTML = '';
-
-        data.original.forEach(file => {
-          const img = document.createElement('img');
-          img.src = file.url;
-          originalContainer?.appendChild(img);
-        });
-
-        data.resized.forEach(file => {
-          const img = document.createElement('img');
-          img.src = file.url;
-          resizedContainer?.appendChild(img);
-        });
-      },
-      error: (error) => console.error('Error loading images:', error)
-    });
-  }
-
   async upload() {
     if (!this.selectedFile) {
       alert("Please select a file first.");
@@ -147,8 +105,19 @@ export class UserProfileComponent implements OnInit {
 
     try {
       this.uploadedUrl = await this.s3UploadService.uploadFile(this.selectedFile);
+      this.loadItems(); // Refresh the images after upload
     } catch (error) {
       alert("Upload failed!");
     }
+  }
+
+  loadItems(): void {
+    this.s3UploadService.listOriginalImages().then(urls => {
+      this.originalImages = urls;
+    });
+
+    this.s3UploadService.listResizedImages().then(urls => {
+      this.resizedImages = urls;
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { ObjectCannedACL } from "@aws-sdk/client-s3";
 
 @Injectable({
@@ -13,7 +13,6 @@ export class S3UploadService {
   constructor() {
     this.s3Client = new S3Client({
       region: this.region,
-      credentials: undefined
     });
   }
 
@@ -26,9 +25,7 @@ export class S3UploadService {
       Body: file,
       ContentType: file.type,
       ACL: ObjectCannedACL.public_read,
- // ✅ Use Enum instead of string
     };
-    
 
     try {
       await this.s3Client.send(new PutObjectCommand(uploadParams));
@@ -39,5 +36,30 @@ export class S3UploadService {
       throw error;
     }
   }
+
+  async listOriginalImages(): Promise<string[]> {
+    return this.listImages('original-images/');
+  }
+
+  async listResizedImages(): Promise<string[]> {
+    return this.listImages('resized-images/');
+  }
+
+  private async listImages(prefix: string): Promise<string[]> {
+    const listParams = {
+      Bucket: this.bucketName,
+      Prefix: prefix,
+    };
+
+    try {
+      const data = await this.s3Client.send(new ListObjectsV2Command(listParams));
+      return data.Contents?.map(item => `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${item.Key}`) || [];
+    } catch (error) {
+      console.error("Error listing images:", error);
+      return [];
+    }
+  }
 }
+
+
 
