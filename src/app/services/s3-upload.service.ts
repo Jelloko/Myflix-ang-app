@@ -13,6 +13,8 @@ export class S3UploadService {
   constructor() {
     this.s3Client = new S3Client({
       region: this.region,
+      credentials: undefined, // No credentials needed for public access
+      forcePathStyle: true, // Required for public access
     });
   }
 
@@ -24,7 +26,7 @@ export class S3UploadService {
       Key: fileKey,
       Body: file,
       ContentType: file.type,
-      ACL: ObjectCannedACL.public_read,
+      ACL: ObjectCannedACL.public_read, // Make the uploaded file publicly accessible
     };
 
     try {
