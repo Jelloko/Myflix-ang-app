@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 /**
  * Base URL for the API endpoints.
  */
-const apiUrl = 'http://54.89.73.146/';
+const apiUrl = 'http://54.221.98.130/';
 
 /**
  * Injectable service to manage user registration, authentication, and API interactions.
