@@ -3,11 +3,9 @@ import { UserRegistrationService } from '../fetch-api-data.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { S3UploadService } from '../services/s3-upload.service';
 
-/**
- * Component for displaying and editing the user's profile.
- * Includes functionality to view and update user information, manage favorite movies, and navigate to other parts of the app.
- */
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
@@ -16,48 +14,32 @@ import { DatePipe } from '@angular/common';
   providers: [DatePipe] // Provide DatePipe in this component
 })
 export class UserProfileComponent implements OnInit {
-  /** Stores the user's profile data. */
   userData: any = {};
-
-  /** Array to hold the user's favorite movies. */
   favoriteMovies: any[] = [];
-
-  /** Flag to toggle the edit mode for user profile updates. */
   isEditing: boolean = false;
+  selectedFile: File | null = null;
+  uploadedUrl: string | null = null;
 
-  /**
-   * Creates an instance of UserProfileComponent.
-   * @param fetchApiData - Service for making API calls related to user data.
-   * @param router - Router service for navigation.
-   * @param snackBar - Service for displaying snack bar notifications.
-   * @param datePipe - Service for formatting dates.
-   */
   constructor(
     public fetchApiData: UserRegistrationService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private http: HttpClient,
+    private s3UploadService: S3UploadService
   ) {
-    // Initialize user data from localStorage
     this.userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
   }
 
-  /**
-   * Lifecycle hook that initializes the component.
-   * If user data is available, fetches the latest user information from the backend.
-   */
   ngOnInit(): void {
     if (this.userData?.Name) {
       this.getUser();
     } else {
       console.error('User data is missing');
     }
+    this.loadItems();
   }
 
-  /**
-   * Fetches the user's profile data from the backend API.
-   * Updates localStorage with the latest user data.
-   */
   getUser(): void {
     this.fetchApiData.getUserByName(this.userData.Name).subscribe(
       (res: any) => {
@@ -70,10 +52,10 @@ export class UserProfileComponent implements OnInit {
     );
   }
 
-  /**
-   * Formats the user's birthday for display.
-   * @returns A formatted date string (e.g., "April 1, 1996") or null if no birthday is available.
-   */
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
   getFormattedBirthday(): string | null {
     if (this.userData.Birthday) {
       return this.datePipe.transform(this.userData.Birthday, 'longDate');
@@ -81,11 +63,6 @@ export class UserProfileComponent implements OnInit {
     return null;
   }
 
-  /**
-   * Updates the user's profile data by sending the changes to the backend API.
-   * On success, updates localStorage and displays a success message.
-   * On failure, displays an error message.
-   */
   updateUser(): void {
     this.fetchApiData.editUser(this.userData).subscribe(
       (res: any) => {
@@ -101,32 +78,77 @@ export class UserProfileComponent implements OnInit {
     );
   }
 
-  /**
-   * Toggles the edit mode for updating the user's profile.
-   */
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
   }
 
-  /**
-   * Resets the user's profile data to its original state from localStorage.
-   */
   resetUser(): void {
     this.userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
   }
 
-  /**
-   * Navigates the user back to the movie list.
-   */
   backToMovie(): void {
     this.router.navigate(['movies']);
   }
 
-  /**
-   * Logs the user out by clearing their data from localStorage and navigating to the welcome page.
-   */
   logout(): void {
     this.router.navigate(['welcome']);
     localStorage.removeItem('currentUser');
+  }
+
+  uploadFile(): void {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (!fileInput.files?.length) {
+      alert('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+
+    this.http.post<{ message: string }>('/api/upload', formData).subscribe({
+      next: (response) => {
+        alert(response.message);
+        this.loadItems();
+      },
+      error: (error) => console.error('Upload error:', error)
+    });
+  }
+
+  loadItems(): void {
+    this.http.get<{ original: any[], resized: any[] }>('/api/images').subscribe({
+      next: (data) => {
+        const originalContainer = document.getElementById('originalImages');
+        const resizedContainer = document.getElementById('resizedImages');
+
+        if (originalContainer) originalContainer.innerHTML = '';
+        if (resizedContainer) resizedContainer.innerHTML = '';
+
+        data.original.forEach(file => {
+          const img = document.createElement('img');
+          img.src = file.url;
+          originalContainer?.appendChild(img);
+        });
+
+        data.resized.forEach(file => {
+          const img = document.createElement('img');
+          img.src = file.url;
+          resizedContainer?.appendChild(img);
+        });
+      },
+      error: (error) => console.error('Error loading images:', error)
+    });
+  }
+
+  async upload() {
+    if (!this.selectedFile) {
+      alert("Please select a file first.");
+      return;
+    }
+
+    try {
+      this.uploadedUrl = await this.s3UploadService.uploadFile(this.selectedFile);
+    } catch (error) {
+      alert("Upload failed!");
+    }
   }
 }
