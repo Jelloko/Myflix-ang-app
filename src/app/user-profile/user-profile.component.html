@@ -98,17 +98,12 @@
     </button>
   </form>
 </div>
-<div>
-  
+
+<div class="container">
+  <h1>Upload Files</h1>
   <input type="file" (change)="onFileSelected($event)">
 <button (click)="upload()">Upload</button>
 <p *ngIf="uploadedUrl">Uploaded URL: <a [href]="uploadedUrl" target="_blank">{{ uploadedUrl }}</a></p>
-
-</div>
-<div class="container">
-  <h1>Upload Files</h1>
-  <input type="file" id="fileInput">
-  <button (click)="uploadFile()">Upload</button>
 
   <h2>Refresh Images</h2>
   <button (click)="loadItems()">Refresh</button>

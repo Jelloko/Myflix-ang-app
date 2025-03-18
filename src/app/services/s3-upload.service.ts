@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { ObjectCannedACL } from "@aws-sdk/client-s3";
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +24,11 @@ export class S3UploadService {
       Bucket: this.bucketName,
       Key: fileKey,
       Body: file,
-      ContentType: file.type
+      ContentType: file.type,
+      ACL: ObjectCannedACL.public_read,
+ // ✅ Use Enum instead of string
     };
+    
 
     try {
       await this.s3Client.send(new PutObjectCommand(uploadParams));
